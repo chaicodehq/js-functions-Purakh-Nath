@@ -40,13 +40,51 @@
  *   // => { totalCustomers: 3, totalRevenue: 7200, mealBreakdown: { veg: 2, nonveg: 1 } }
  */
 export function createTiffinPlan({ name, mealType = "veg", days = 30 } = {}) {
-  // Your code here
+  const mealPrices = {
+  veg: 80,
+  nonveg: 120,
+  jain: 90
+}
+
+if(!mealPrices[mealType]) return null;
+if(!name) return null;
+let dailyRate = mealPrices[mealType];
+let totalCost = dailyRate * days
+
+return { name, mealType, days, dailyRate, totalCost }
 }
 
 export function combinePlans(...plans) {
-  // Your code here
+  if(plans.length === 0) return null;
+  let totalCustomers = plans.length;
+  let totalRevenue = 0;
+  let mealBreakdown = {}
+  for (const plan of plans) {
+    totalRevenue = totalRevenue + plan.totalCost
+    const meal = plan.mealType;
+    mealBreakdown[meal] = (mealBreakdown[meal] || 0) + 1;
+  }
+
+  return { totalCustomers, totalRevenue, mealBreakdown }
 }
 
 export function applyAddons(plan, ...addons) {
-  // Your code here
+  if (!plan) return null;
+  const { dailyRate, days } = plan;
+  let addonTotal = 0;
+
+  for (const addon of addons) {
+  addonTotal = addonTotal + addon.price;
+}
+
+const newDailyRate = dailyRate + addonTotal;
+const newTotalCost = newDailyRate * days;
+const addonNames = addons.map(addon => addon.name);
+
+return {
+  ...plan,// spread -> Glass tod ke pieces faila do
+  dailyRate: newDailyRate,
+  totalCost: newTotalCost,
+  addonNames
+}
 }

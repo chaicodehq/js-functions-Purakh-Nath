@@ -45,17 +45,60 @@
  *   // => [{ rating: 5 }, { rating: 3 }]
  */
 export function createFilter(field, operator, value) {
-  // Your code here
+
+  return function (object) {
+    const objectValue = object[field];
+
+    switch (operator) {
+      case ">":
+        return objectValue > value;
+      case "<":
+        return objectValue < value;
+      case ">=":
+        return objectValue >= value;
+      case "<=":
+        return objectValue <= value;
+      case "===":
+        return objectValue === value;
+      default:
+        return false; 
+    }
+  }
 }
 
 export function createSorter(field, order = "asc") {
-  // Your code here
+  return function(a, b) {
+    const valueA = a[field];
+    const valueB = b[field];
+
+    if (valueA === valueB) return 0;
+
+    if (order === "asc") {
+      return valueA > valueB ? 1 : -1;
+    } else {
+      return valueA < valueB ? 1 : -1;
+    }
+  };
 }
 
 export function createMapper(fields) {
-  // Your code here
+   return function(obj) {
+    const mapper = {};
+    for (const field of fields) {
+      if (field in obj) {
+        mapper[field] = obj[field];
+      }
+    }
+    return mapper;
+  };
 }
 
 export function applyOperations(data, ...operations) {
-  // Your code here
+   if (!Array.isArray(data)) return [];
+  let result = data;
+  for (const operation of operations) {
+    result = operation(result); // returns a new array
+  }
+
+  return result;
 }
